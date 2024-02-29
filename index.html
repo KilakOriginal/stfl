@@ -6,39 +6,6 @@
 <div style="display: inline-block;self-align: left;"><input type="checkbox" style="width: 100%;height: 1.5em;margin-bottom: 15px;" id="signal_yes" name="signal_yes"></div>
 <input type="number" pattern="[0-9]*" inputmode="numeric" style="display: block;width: 900px;max-width: 100%;height: 35px;margin-left: auto;margin-right: auto;margin-bottom: 20px;border-radius: 1.5rem; padding: 15px;-moz-appearance:textfield;" id="signal_number" name="signal_number"></input>
 <button class="btn btn-primary" type="submit" style="display: block;width: auto;float: right;margin-bottom:10px;" id="submit" name="submit"></button><p><b><a href="https://www.fs-infmath.uni-kiel.de/wiki/Hauptseite" style="color: #454545;" id="go_back"></a></b></p></form><script src="assets/bootstrap/js/bootstrap.min.js"></script>
-<?php
-if((isset($_GET["lang"]))) {
-    $lang = $_GET['lang'];
-}
-else {
-    $lang = "de";
-}
-$text = json_decode(file_get_contents("languages/$lang.json"), true);
-$title = $text["title"];
-$about = $text["about"];
-$name_placeholder = $text["name_placeholder"];
-$email_placeholder = $text["email_placeholder"];
-$signal_text = $text["signal_text"];
-$signal_placeholder = $text["signal_placeholder"];
-$send_button = $text["send_button"];
-$go_back = $text["go_back"];
-
-$recipient = $text["recipient"];
-
-if(isset($_POST["submit"])) {
-    $subject = "[Betreueranmeldung - OE]: " . $_POST["name"];
-    $number = "Nein";
-    if(isset($_POST["signal_yes"])) { $number = $_POST["signal_number"]; }
-    $message = "Name: " . $_POST["name"] . "\r\n" . "Sprache: " . $lang . "\r\n" . "E-Mail: " . $_POST["email"] . "\r\n" . "Signal: " . $number;
-    if(isset($_POST["email"]) && isset($_POST["name"]) && mail($recipient, $subject, $message)) {
-        header("Location: success.php?lang=$lang");
-    }
-    else {
-        header("Location: failed.php?lang=$lang");
-    }
-    die();
-}
-?>
 <script>
     window.addEventListener("load", load_page_contents);
     function load_page_contents() {
