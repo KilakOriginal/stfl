@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"><title id="page_title"></title><link rel="shortcut icon" href="https://raw.githubusercontent.com/KilakOriginal/stfl/main/favicon.ico"/><link rel="stylesheet" href="https://raw.githubusercontent.com/KilakOriginal/stfl/main/bootstrap.min.css"><link rel="stylesheet" href="./styles.min.css"><style type="text/css">input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance: none;margin: 0;}</style><script src="./bootstrap.min.js"></script></head><body style="width: 930px; max-width: 100%; margin-left: auto;margin-right: auto;padding: 0;"><h4 style="text-align: center;margin-top: 10px;"><span style="color: rgb(112, 114, 118);">Fachschaft Informatik</span></h4><h1 style="text-align: center;margin-top: 10px;" id="title"><strong></strong></h1><p style="text-align: justify;background: #0d6efd;border-radius: 20px;color: rgb(255,255,255);width: 900px; max-width: 85%;align-self: center;margin-left: auto;margin-right: auto;margin-top: 15px;padding: 15px;" id="about"></p>
+<form action="<?php echo $_SERVER["PHP_SELF"] . '?'.http_build_query($_GET); ?>" method="post" style="margin-left: auto;margin-right: auto;width:900px;max-width: 85%;">
+<input type="text" style="display: block;width: 900px;max-width: 100%;height: 35px;margin-left: auto;margin-right: auto;margin-bottom: 20px;border-radius: 1.5rem; padding: 15px;" id="name" name="name"></input>
+<input type="text" style="display: block;width: 900px;max-width: 100%;height: 35px;margin-left: auto;margin-right: auto;margin-bottom: 20px;border-radius: 1.5rem; padding: 15px;" id="email" name="email"></input>
+<p style="text-align: justify;width: 900px;max-width: 100%;align-self: center;margin-left: auto;margin-right: auto;" id="signal_text"></p>
+<div style="display: inline-block;self-align: left;"><input type="checkbox" style="width: 100%;height: 1.5em;margin-bottom: 15px;" id="signal_yes" name="signal_yes"></div>
+<input type="number" pattern="[0-9]*" inputmode="numeric" style="display: block;width: 900px;max-width: 100%;height: 35px;margin-left: auto;margin-right: auto;margin-bottom: 20px;border-radius: 1.5rem; padding: 15px;-moz-appearance:textfield;" id="signal_number" name="signal_number"></input>
+<button class="btn btn-primary" type="submit" style="display: block;width: auto;float: right;margin-bottom:10px;" id="submit" name="submit"></button><p><b><a href="https://www.fs-infmath.uni-kiel.de/wiki/Hauptseite" style="color: #454545;" id="go_back"></a></b></p></form><script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<?php
+if((isset($_GET["lang"]))) {
+    $lang = $_GET['lang'];
+}
+else {
+    $lang = "de";
+}
+$text = json_decode(file_get_contents("languages/$lang.json"), true);
+$title = $text["title"];
+$about = $text["about"];
+$name_placeholder = $text["name_placeholder"];
+$email_placeholder = $text["email_placeholder"];
+$signal_text = $text["signal_text"];
+$signal_placeholder = $text["signal_placeholder"];
+$send_button = $text["send_button"];
+$go_back = $text["go_back"];
+
+$recipient = $text["recipient"];
+
+if(isset($_POST["submit"])) {
+    $subject = "[Betreueranmeldung - OE]: " . $_POST["name"];
+    $number = "Nein";
+    if(isset($_POST["signal_yes"])) { $number = $_POST["signal_number"]; }
+    $message = "Name: " . $_POST["name"] . "\r\n" . "Sprache: " . $lang . "\r\n" . "E-Mail: " . $_POST["email"] . "\r\n" . "Signal: " . $number;
+    if(isset($_POST["email"]) && isset($_POST["name"]) && mail($recipient, $subject, $message)) {
+        header("Location: success.php?lang=$lang");
+    }
+    else {
+        header("Location: failed.php?lang=$lang");
+    }
+    die();
+}
+?>
+<script>
+    window.addEventListener("load", load_page_contents);
+    function load_page_contents() {
+        let title = "<?php echo $title; ?>";
+        let about = '<?php echo $about; ?>';
+        let name_placeholder = "<?php echo $name_placeholder; ?>";
+        let email_placeholder = "<?php echo $email_placeholder; ?>";
+        let signal_placeholder = "<?php echo $signal_placeholder; ?>";
+        let signal_text = "<?php echo $signal_text; ?>";
+        let send_button = "<?php echo $send_button; ?>";
+        let go_back = "<?php echo $go_back; ?>";
+
+        document.getElementById("page_title").innerHTML = title;
+        document.getElementById("title").innerHTML = title;
+        document.getElementById("about").innerHTML = about;
+        document.getElementById("name").placeholder = name_placeholder;
+        document.getElementById("email").placeholder = email_placeholder;
+        document.getElementById("signal_number").placeholder = signal_placeholder;
+        document.getElementById("signal_text").innerHTML = signal_text;
+        document.getElementById("submit").innerHTML = send_button;
+        document.getElementById("go_back").innerHTML = go_back;
+    }
+</script>
+</body></html>
